@@ -10,8 +10,14 @@ public final class CsrfUtil {
     private static final SecureRandom RANDOM = new SecureRandom();
     private CsrfUtil() { }
     public static String token(HttpSession session) {
-        String value = (String) session.getAttribute(SESSION_KEY);
-        if (value == null) { byte[] bytes = new byte[32]; RANDOM.nextBytes(bytes); value = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes); session.setAttribute(SESSION_KEY, value); }
+        Object value = session.getAttribute(SESSION_KEY);
+        return value instanceof String ? (String) value : rotateToken(session);
+    }
+    public static String rotateToken(HttpSession session) {
+        byte[] bytes = new byte[32];
+        RANDOM.nextBytes(bytes);
+        String value = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+        session.setAttribute(SESSION_KEY, value);
         return value;
     }
     public static boolean valid(HttpServletRequest request) {

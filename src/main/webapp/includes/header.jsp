@@ -18,3 +18,4 @@
 <body data-context-path="${pageContext.request.contextPath}">
 <a class="skip-link" href="#main"><fmt:message key="nav.skip"/></a>
 <jsp:include page="navbar.jsp"/>
+<c:if test="${param.sessionExpired eq '1'}"><div class="container"><p class="alert alert-error"><fmt:message key="login.sessionExpired"/></p></div></c:if>

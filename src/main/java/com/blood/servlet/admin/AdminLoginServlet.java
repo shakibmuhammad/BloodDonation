@@ -3,6 +3,7 @@ package com.blood.servlet.admin;
 import com.blood.dao.AdminDAO;
 import com.blood.model.Admin;
 import com.blood.util.I18n;
+import com.blood.util.CsrfUtil;
 import com.blood.util.Validator;
 import com.blood.util.WebUtil;
 import javax.servlet.ServletException;
@@ -13,9 +14,12 @@ import java.io.IOException;
 @WebServlet("/admin/login")
 public class AdminLoginServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req,HttpServletResponse resp)throws ServletException,IOException{
+        WebUtil.noStore(resp);
+        req.setAttribute("csrfToken",CsrfUtil.rotateToken(req.getSession(true)));
         req.getRequestDispatcher("/admin/login.jsp").forward(req,resp);
     }
     protected void doPost(HttpServletRequest req,HttpServletResponse resp)throws ServletException,IOException{
+        WebUtil.noStore(resp);
         try{
             Admin admin=new AdminDAO().authenticate(Validator.clean(req.getParameter("identity")),req.getParameter("password"));
             if(admin==null){
