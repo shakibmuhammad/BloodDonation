@@ -178,7 +178,7 @@
 
             .home-hero .button-light {
               min-width: 180px;
-              color: #851722
+              color: #ffffff
             }
 
             .home-hero .button-outline.light-link {

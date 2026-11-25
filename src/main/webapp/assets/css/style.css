@@ -198,12 +198,12 @@ select {
 }
 .button-light {
   background: #fff;
-  color: var(--maroon);
+  color: #fff;
   border-color: #fff;
 }
 .button-light:hover {
   background: #fff5f3;
-  color: var(--maroon);
+  color: #fff;
 }
 .hero {
   position: relative;
@@ -1649,7 +1649,7 @@ a:hover {
   flex-wrap: wrap;
 }
 .home-hero .button-light {
-  color: #8f1823;
+  color: #f7f7f7;
 }
 .home-search {
   padding: 56px 0 28px;
@@ -1950,7 +1950,7 @@ textarea:focus-visible {
 }
 .home-hero .button-light {
   min-width: 185px;
-  color: #851722;
+  color: #fdfdfd;
   border-color: #fff;
 }
 .home-hero .button-outline.light-link {
