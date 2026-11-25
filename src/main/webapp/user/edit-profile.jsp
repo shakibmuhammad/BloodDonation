@@ -1,2 +1,102 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %><%@ include file="/WEB-INF/jspf/lang.jspf" %><%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %><c:set var="pageTitleKey" scope="request" value="page.editProfile"/><jsp:include page="/includes/header.jsp"/>
-<main id="main" class="page-main"><section class="container narrow-page"><a class="back-link" href="${pageContext.request.contextPath}/user/profile"><fmt:message key="profile.back"/></a><div class="panel edit-panel"><p class="eyebrow"><fmt:message key="profile.keepCurrent"/></p><h1><fmt:message key="profile.editHeading"/></h1><c:if test="${not empty error}"><p class="alert alert-error"><c:out value="${error}"/></p></c:if><form method="post" action="${pageContext.request.contextPath}/user/edit-profile" class="form-grid" data-validate><input type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>"/><label class="full-field"><fmt:message key="common.fullName"/><input name="fullName" value="<c:out value='${donor.fullName}'/>" maxlength="120" required></label><label><fmt:message key="common.email"/><input value="<c:out value='${donor.email}'/>" readonly aria-describedby="email-note"><small id="email-note"><fmt:message key="profile.emailCannotChange"/></small></label><label><fmt:message key="common.phone"/><input name="phone" type="tel" value="<c:out value='${donor.phone}'/>" data-phone-error="${msgPhoneValidation}" required></label><label><fmt:message key="common.bloodGroup"/><select name="bloodGroup" required data-searchable data-search-placeholder="${msgSearchPlaceholder}" data-search-no-results="${msgSearchNoResults}" data-search-required="${msgSearchRequired}"><option value="A+" ${donor.bloodGroup eq 'A+' ? 'selected' : ''}>A+</option><option value="A-" ${donor.bloodGroup eq 'A-' ? 'selected' : ''}>A-</option><option value="B+" ${donor.bloodGroup eq 'B+' ? 'selected' : ''}>B+</option><option value="B-" ${donor.bloodGroup eq 'B-' ? 'selected' : ''}>B-</option><option value="AB+" ${donor.bloodGroup eq 'AB+' ? 'selected' : ''}>AB+</option><option value="AB-" ${donor.bloodGroup eq 'AB-' ? 'selected' : ''}>AB-</option><option value="O+" ${donor.bloodGroup eq 'O+' ? 'selected' : ''}>O+</option><option value="O-" ${donor.bloodGroup eq 'O-' ? 'selected' : ''}>O-</option></select></label><c:set var="divisionSelectId" value="profileDivision"/><c:set var="divisionTargetId" value="districtId"/><%@ include file="/WEB-INF/jspf/division-select.jspf" %><label><fmt:message key="common.district"/><select name="districtId" id="districtId" required data-searchable data-search-placeholder="${msgSearchPlaceholder}" data-search-no-results="${msgSearchNoResults}" data-search-required="${msgSearchRequired}"><c:forEach var="d" items="${districts}"><option value="${d.districtId}" data-division="${d.division}" ${donor.districtId eq d.districtId ? 'selected' : ''}><c:out value="${d.name}"/></option></c:forEach></select></label><label><fmt:message key="common.upazila"/> <span class="optional"><fmt:message key="common.optional"/></span><select name="upazilaId" id="upazilaSelect" data-district-source="districtId" data-selected="${donor.upazilaId}" data-searchable data-search-placeholder="${msgSearchPlaceholder}" data-search-no-results="${msgSearchNoResults}" data-search-required="${msgSearchRequired}" data-upazila-any="${msgAnyUpazila}" data-upazila-choose="${msgChooseDistrictFirst}" data-upazila-error="${msgUpazilaLoadError}" data-upazila-loading="${msgUpazilaLoading}" data-upazila-none="${msgNoUpazilas}"><option value=""><fmt:message key="common.noUpazila"/></option><c:forEach var="a" items="${upazilas}"><option value="${a.upazilaId}" ${donor.upazilaId eq a.upazilaId ? 'selected' : ''}><c:out value="${a.name}"/></option></c:forEach></select></label><label class="full-field"><fmt:message key="profile.address"/><input name="address" value="<c:out value='${donor.address}'/>" maxlength="240"></label><div class="full-field form-actions"><button class="button" type="submit"><fmt:message key="profile.save"/></button><a class="button button-outline" href="${pageContext.request.contextPath}/user/profile"><fmt:message key="common.cancel"/></a></div></form></div></section></main><jsp:include page="/includes/footer.jsp"/>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+    <%@ include file="/WEB-INF/jspf/lang.jspf" %>
+        <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+            <c:set var="pageTitleKey" scope="request" value="page.editProfile" />
+            <jsp:include page="/includes/header.jsp" />
+            <main id="main" class="page-main">
+                <section class="container narrow-page"><a class="back-link"
+                        href="${pageContext.request.contextPath}/user/profile">
+                        <fmt:message key="profile.back" />
+                    </a>
+                    <div class="panel edit-panel">
+                        <p class="eyebrow">
+                            <fmt:message key="profile.keepCurrent" />
+                        </p>
+                        <h1>
+                            <fmt:message key="profile.editHeading" />
+                        </h1>
+                        <c:if test="${not empty error}">
+                            <p class="alert alert-error">
+                                <c:out value="${error}" />
+                            </p>
+                        </c:if>
+                        <form method="post" action="${pageContext.request.contextPath}/user/edit-profile"
+                            class="form-grid" data-validate><input type="hidden" name="csrfToken"
+                                value="<c:out value='${csrfToken}'/>" /><label class="full-field">
+                                <fmt:message key="common.fullName" /><input name="fullName"
+                                    value="<c:out value='${donor.fullName}'/>" maxlength="120" required>
+                            </label><label>
+                                <fmt:message key="common.email" /><input value="<c:out value='${donor.email}'/>"
+                                    readonly aria-describedby="email-note"><small id="email-note">
+                                    <fmt:message key="profile.emailCannotChange" />
+                                </small>
+                            </label><label>
+                                <fmt:message key="common.phone" /><input name="phone" type="tel"
+                                    value="<c:out value='${donor.phone}'/>" data-phone-error="${msgPhoneValidation}"
+                                    required>
+                            </label><label>
+                                <fmt:message key="common.bloodGroup" /><select name="bloodGroup" required
+                                    data-searchable data-search-placeholder="${msgSearchPlaceholder}"
+                                    data-search-no-results="${msgSearchNoResults}"
+                                    data-search-required="${msgSearchRequired}">
+                                    <option value="A+" ${donor.bloodGroup eq 'A+' ? 'selected' : '' }>A+</option>
+                                    <option value="A-" ${donor.bloodGroup eq 'A-' ? 'selected' : '' }>A-</option>
+                                    <option value="B+" ${donor.bloodGroup eq 'B+' ? 'selected' : '' }>B+</option>
+                                    <option value="B-" ${donor.bloodGroup eq 'B-' ? 'selected' : '' }>B-</option>
+                                    <option value="AB+" ${donor.bloodGroup eq 'AB+' ? 'selected' : '' }>AB+</option>
+                                    <option value="AB-" ${donor.bloodGroup eq 'AB-' ? 'selected' : '' }>AB-</option>
+                                    <option value="O+" ${donor.bloodGroup eq 'O+' ? 'selected' : '' }>O+</option>
+                                    <option value="O-" ${donor.bloodGroup eq 'O-' ? 'selected' : '' }>O-</option>
+                                </select>
+                            </label>
+                            <c:set var="divisionSelectId" value="profileDivision" />
+                            <c:set var="divisionTargetId" value="districtId" />
+                            <%@ include file="/WEB-INF/jspf/division-select.jspf" %><label>
+                                    <fmt:message key="common.district" /><select name="districtId" id="districtId"
+                                        required data-searchable data-search-placeholder="${msgSearchPlaceholder}"
+                                        data-search-no-results="${msgSearchNoResults}"
+                                        data-search-required="${msgSearchRequired}">
+                                        <c:forEach var="d" items="${districts}">
+                                            <option value="${d.districtId}" data-division="${d.division}"
+                                                ${donor.districtId eq d.districtId ? 'selected' : '' }>
+                                                <c:out value="${d.name}" />
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                </label><label>
+                                    <fmt:message key="common.upazila" /> <span class="optional">
+                                        <fmt:message key="common.optional" />
+                                    </span><select name="upazilaId" id="upazilaSelect" data-district-source="districtId"
+                                        data-selected="${donor.upazilaId}" data-searchable
+                                        data-search-placeholder="${msgSearchPlaceholder}"
+                                        data-search-no-results="${msgSearchNoResults}"
+                                        data-search-required="${msgSearchRequired}" data-upazila-any="${msgAnyUpazila}"
+                                        data-upazila-choose="${msgChooseDistrictFirst}"
+                                        data-upazila-error="${msgUpazilaLoadError}"
+                                        data-upazila-loading="${msgUpazilaLoading}"
+                                        data-upazila-none="${msgNoUpazilas}">
+                                        <option value="">
+                                            <fmt:message key="common.noUpazila" />
+                                        </option>
+                                        <c:forEach var="a" items="${upazilas}">
+                                            <option value="${a.upazilaId}" ${donor.upazilaId eq a.upazilaId ? 'selected'
+                                                : '' }>
+                                                <c:out value="${a.name}" />
+                                            </option>
+                                        </c:forEach>
+                                    </select>
+                                </label><label class="full-field">
+                                    <fmt:message key="profile.address" /><input name="address"
+                                        value="<c:out value='${donor.address}'/>" maxlength="240">
+                                </label>
+                                <div class="full-field form-actions"><button class="button" type="submit">
+                                        <fmt:message key="profile.save" />
+                                    </button><a class="button button-outline"
+                                        href="${pageContext.request.contextPath}/user/profile">
+                                        <fmt:message key="common.cancel" />
+                                    </a></div>
+                        </form>
+                    </div>
+                </section>
+            </main>
+            <jsp:include page="/includes/footer.jsp" />

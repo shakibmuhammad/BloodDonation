@@ -1,3 +1,186 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %><%@ include file="/WEB-INF/jspf/lang.jspf" %><%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %><c:set var="pageTitleKey" scope="request" value="page.register"/><jsp:include page="/includes/header.jsp"/>
-<main id="main" class="page-main"><section class="form-page container"><div class="form-intro"><p class="eyebrow"><fmt:message key="register.eyebrow"/></p><h1><fmt:message key="register.heading"/></h1><p><fmt:message key="register.intro"/></p><div class="note-card"><span class="note-icon">♡</span><div><strong><fmt:message key="register.noteHeading"/></strong><p><fmt:message key="register.noteBody"/></p></div></div></div><div class="panel form-panel"><c:if test="${not empty error}"><p class="alert alert-error"><c:out value="${error}"/></p></c:if><form method="post" action="${pageContext.request.contextPath}/register" class="form-grid" data-validate>
-<input type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>"/><label class="full-field"><fmt:message key="common.fullName"/><input name="fullName" type="text" maxlength="120" autocomplete="name" required></label><label><fmt:message key="register.username"/><input name="username" type="text" minlength="3" maxlength="60" pattern="[A-Za-z0-9._-]{3,60}" autocomplete="username" autocapitalize="none" spellcheck="false" required></label><label><fmt:message key="common.email"/><input name="email" type="email" maxlength="160" autocomplete="email" required></label><label><fmt:message key="common.phone"/><input name="phone" type="tel" placeholder="${msgPhonePlaceholder}" autocomplete="tel" required data-phone-error="${msgPhoneValidation}"></label><label><fmt:message key="common.bloodGroup"/><select name="bloodGroup" required data-searchable data-search-placeholder="${msgSearchPlaceholder}" data-search-no-results="${msgSearchNoResults}" data-search-required="${msgSearchRequired}"><option value=""><fmt:message key="common.chooseBloodGroup"/></option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option></select></label><c:set var="divisionSelectId" value="registerDivision"/><c:set var="divisionTargetId" value="districtId"/><%@ include file="/WEB-INF/jspf/division-select.jspf" %><label><fmt:message key="common.district"/><select name="districtId" id="districtId" required data-searchable data-search-placeholder="${msgSearchPlaceholder}" data-search-no-results="${msgSearchNoResults}" data-search-required="${msgSearchRequired}"><option value=""><fmt:message key="common.chooseDistrict"/></option><c:forEach var="d" items="${districts}"><option value="${d.districtId}" data-division="${d.division}"><c:out value="${d.name}"/></option></c:forEach></select></label><label><fmt:message key="common.upazila"/> <span class="optional"><fmt:message key="common.optional"/></span><select name="upazilaId" id="upazilaSelect" data-district-source="districtId" disabled data-searchable data-search-placeholder="${msgSearchPlaceholder}" data-search-no-results="${msgSearchNoResults}" data-search-required="${msgSearchRequired}" data-upazila-any="${msgAnyUpazila}" data-upazila-choose="${msgChooseDistrictFirst}" data-upazila-error="${msgUpazilaLoadError}" data-upazila-loading="${msgUpazilaLoading}" data-upazila-none="${msgNoUpazilas}"><option value=""><fmt:message key="select.chooseDistrictFirst"/></option></select></label><label class="full-field"><fmt:message key="register.address"/><input name="address" type="text" maxlength="240" autocomplete="street-address"></label><label class="full-field"><fmt:message key="common.password"/><input name="password" type="password" minlength="8" maxlength="100" autocomplete="new-password" required><small><fmt:message key="register.passwordRule"/></small></label><div class="full-field"><button class="button button-block" type="submit"><fmt:message key="register.submit"/></button><p class="form-note"><fmt:message key="register.terms"/></p></div></form><p class="form-foot"><fmt:message key="register.already"/> <a href="${pageContext.request.contextPath}/login"><fmt:message key="nav.login"/></a></p></div></section></main><jsp:include page="/includes/footer.jsp"/>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %> <%@
+include file="/WEB-INF/jspf/lang.jspf" %> <%@ taglib prefix="c"
+uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="pageTitleKey" scope="request" value="page.register" />
+<jsp:include page="/includes/header.jsp" />
+<main id="main" class="page-main">
+  <section class="form-page container">
+    <div class="form-intro">
+      <p class="eyebrow">
+        <fmt:message key="register.eyebrow" />
+      </p>
+      <h1>
+        <fmt:message key="register.heading" />
+      </h1>
+      <p>
+        <fmt:message key="register.intro" />
+      </p>
+      <div class="note-card">
+        <span class="note-icon">♡</span>
+        <div>
+          <strong>
+            <fmt:message key="register.noteHeading" />
+          </strong>
+          <p>
+            <fmt:message key="register.noteBody" />
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="panel form-panel">
+      <c:if test="${not empty error}">
+        <p class="alert alert-error">
+          <c:out value="${error}" />
+        </p>
+      </c:if>
+      <form
+        method="post"
+        action="${pageContext.request.contextPath}/register"
+        class="form-grid"
+        data-validate
+      >
+        <input
+          type="hidden"
+          name="csrfToken"
+          value="<c:out value='${csrfToken}'/>"
+        /><label class="full-field">
+          <fmt:message key="common.fullName" /><input
+            name="fullName"
+            type="text"
+            maxlength="120"
+            autocomplete="name"
+            required
+          /> </label
+        ><label>
+          <fmt:message key="register.username" /><input
+            name="username"
+            type="text"
+            minlength="3"
+            maxlength="60"
+            pattern="[A-Za-z0-9._-]{3,60}"
+            autocomplete="username"
+            autocapitalize="none"
+            spellcheck="false"
+            required
+          /> </label
+        ><label>
+          <fmt:message key="common.email" /><input
+            name="email"
+            type="email"
+            maxlength="160"
+            autocomplete="email"
+            required
+          /> </label
+        ><label>
+          <fmt:message key="common.phone" /><input
+            name="phone"
+            type="tel"
+            placeholder="${msgPhonePlaceholder}"
+            autocomplete="tel"
+            required
+            data-phone-error="${msgPhoneValidation}"
+          /> </label
+        ><label>
+          <fmt:message key="common.bloodGroup" /><select
+            name="bloodGroup"
+            required
+            data-searchable
+            data-search-placeholder="${msgSearchPlaceholder}"
+            data-search-no-results="${msgSearchNoResults}"
+            data-search-required="${msgSearchRequired}"
+          >
+            <option value="">
+              <fmt:message key="common.chooseBloodGroup" />
+            </option>
+            <option>A+</option>
+            <option>A-</option>
+            <option>B+</option>
+            <option>B-</option>
+            <option>AB+</option>
+            <option>AB-</option>
+            <option>O+</option>
+            <option>O-</option>
+          </select>
+        </label>
+        <c:set var="divisionSelectId" value="registerDivision" />
+        <c:set var="divisionTargetId" value="districtId" />
+        <%@ include file="/WEB-INF/jspf/division-select.jspf" %><label>
+          <fmt:message key="common.district" /><select
+            name="districtId"
+            id="districtId"
+            required
+            data-searchable
+            data-search-placeholder="${msgSearchPlaceholder}"
+            data-search-no-results="${msgSearchNoResults}"
+            data-search-required="${msgSearchRequired}"
+          >
+            <option value="">
+              <fmt:message key="common.chooseDistrict" />
+            </option>
+            <c:forEach var="d" items="${districts}">
+              <option value="${d.districtId}" data-division="${d.division}">
+                <c:out value="${d.name}" />
+              </option>
+            </c:forEach>
+          </select> </label
+        ><label>
+          <fmt:message key="common.upazila" />
+          <span class="optional">
+            <fmt:message key="common.optional" /> </span
+          ><select
+            name="upazilaId"
+            id="upazilaSelect"
+            data-district-source="districtId"
+            disabled
+            data-searchable
+            data-search-placeholder="${msgSearchPlaceholder}"
+            data-search-no-results="${msgSearchNoResults}"
+            data-search-required="${msgSearchRequired}"
+            data-upazila-any="${msgAnyUpazila}"
+            data-upazila-choose="${msgChooseDistrictFirst}"
+            data-upazila-error="${msgUpazilaLoadError}"
+            data-upazila-loading="${msgUpazilaLoading}"
+            data-upazila-none="${msgNoUpazilas}"
+          >
+            <option value="">
+              <fmt:message key="select.chooseDistrictFirst" />
+            </option>
+          </select> </label
+        ><label class="full-field">
+          <fmt:message key="register.address" /><input
+            name="address"
+            type="text"
+            maxlength="240"
+            autocomplete="street-address"
+          /> </label
+        ><label class="full-field">
+          <fmt:message key="common.password" /><input
+            name="password"
+            type="password"
+            minlength="8"
+            maxlength="100"
+            autocomplete="new-password"
+            required
+          /><small>
+            <fmt:message key="register.passwordRule" />
+          </small>
+        </label>
+        <div class="full-field">
+          <button class="button button-block" type="submit">
+            <fmt:message key="register.submit" />
+          </button>
+          <p class="form-note">
+            <fmt:message key="register.terms" />
+          </p>
+        </div>
+      </form>
+      <p class="form-foot">
+        <fmt:message key="register.already" />
+        <a href="${pageContext.request.contextPath}/login">
+          <fmt:message key="nav.login" />
+        </a>
+      </p>
+    </div>
+  </section>
+</main>
+<jsp:include page="/includes/footer.jsp" />

@@ -1,35 +1,301 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ include file="/WEB-INF/jspf/lang.jspf" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<c:set var="pageTitleKey" scope="request" value="page.adminRequests"/>
-<jsp:include page="/admin/includes/header.jsp"/>
+  <%@ include file="/WEB-INF/jspf/lang.jspf" %>
+    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+      <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+        <c:set var="pageTitleKey" scope="request" value="page.adminRequests" />
+        <jsp:include page="/admin/includes/header.jsp" />
 
-<div class="admin-page-heading"><div><p class="eyebrow"><fmt:message key="adminRequests.eyebrow"/></p><h1><fmt:message key="adminRequests.heading"/></h1><p><fmt:message key="adminRequests.intro"/></p></div><span class="admin-count"><strong><c:out value="${totalRequests}" default="0"/></strong> <fmt:message key="common.records"/></span></div>
-<c:if test="${not empty error}"><p class="alert alert-error" role="alert"><c:out value="${error}"/></p></c:if>
-<c:if test="${param.updated eq '1'}"><p class="alert alert-success" role="status"><fmt:message key="adminRequests.updated"/></p></c:if>
-<c:set var="requestForm" value="${not empty editRequest ? editRequest : newRequest}"/>
+        <div class="admin-page-heading">
+          <div>
+            <p class="eyebrow">
+              <fmt:message key="adminRequests.eyebrow" />
+            </p>
+            <h1>
+              <fmt:message key="adminRequests.heading" />
+            </h1>
+            <p>
+              <fmt:message key="adminRequests.intro" />
+            </p>
+          </div><span class="admin-count"><strong>
+              <c:out value="${totalRequests}" default="0" />
+            </strong>
+            <fmt:message key="common.records" />
+          </span>
+        </div>
+        <c:if test="${not empty error}">
+          <p class="alert alert-error" role="alert">
+            <c:out value="${error}" />
+          </p>
+        </c:if>
+        <c:if test="${param.updated eq '1'}">
+          <p class="alert alert-success" role="status">
+            <fmt:message key="adminRequests.updated" />
+          </p>
+        </c:if>
+        <c:set var="requestForm" value="${not empty editRequest ? editRequest : newRequest}" />
 
-<section class="admin-panel admin-record-form">
-  <div class="admin-panel-heading"><div><p class="eyebrow"><c:choose><c:when test="${not empty editRequest}"><fmt:message key="adminRequests.editRequest"/></c:when><c:otherwise><fmt:message key="adminRequests.addRequest"/></c:otherwise></c:choose></p><h2><c:choose><c:when test="${not empty editRequest}"><c:out value="${editRequest.patientName}"/></c:when><c:otherwise><fmt:message key="adminRequests.createRequest"/></c:otherwise></c:choose></h2></div></div>
-  <form method="post" action="${pageContext.request.contextPath}/admin/requests" class="admin-form admin-form-wide">
-    <input type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>"/>
-    <c:choose><c:when test="${not empty editRequest}"><input type="hidden" name="action" value="update"/><input type="hidden" name="requestId" value="${editRequest.requestId}"/></c:when><c:otherwise><input type="hidden" name="action" value="create"/></c:otherwise></c:choose>
-    <label><fmt:message key="request.patient"/><input name="patientName" maxlength="120" required value="<c:out value='${requestForm.patientName}'/>"></label>
-    <label><fmt:message key="common.bloodGroup"/><select name="bloodGroup" required><option value=""><fmt:message key="common.chooseGroup"/></option><option ${requestForm.bloodGroup eq 'A+' ? 'selected' : ''}>A+</option><option ${requestForm.bloodGroup eq 'A-' ? 'selected' : ''}>A-</option><option ${requestForm.bloodGroup eq 'B+' ? 'selected' : ''}>B+</option><option ${requestForm.bloodGroup eq 'B-' ? 'selected' : ''}>B-</option><option ${requestForm.bloodGroup eq 'AB+' ? 'selected' : ''}>AB+</option><option ${requestForm.bloodGroup eq 'AB-' ? 'selected' : ''}>AB-</option><option ${requestForm.bloodGroup eq 'O+' ? 'selected' : ''}>O+</option><option ${requestForm.bloodGroup eq 'O-' ? 'selected' : ''}>O-</option></select></label>
-    <label><fmt:message key="request.hospital"/><input name="hospital" maxlength="180" required value="<c:out value='${requestForm.hospital}'/>"></label>
-    <label><fmt:message key="common.district"/><select name="districtId" id="adminRequestDistrict" required data-searchable data-search-placeholder="${msgSearchPlaceholder}" data-search-no-results="${msgSearchNoResults}" data-search-required="${msgSearchRequired}"><option value=""><fmt:message key="common.chooseDistrict"/></option><c:forEach var="d" items="${districts}"><option value="${d.districtId}" ${requestForm.districtId eq d.districtId ? 'selected' : ''}><c:out value="${d.name}"/></option></c:forEach></select></label>
-    <label><fmt:message key="common.upazila"/> <span class="optional"><fmt:message key="common.optional"/></span><select name="upazilaId" data-district-source="adminRequestDistrict" data-selected="${requestForm.upazilaId}" data-searchable data-search-placeholder="${msgSearchPlaceholder}" data-search-no-results="${msgSearchNoResults}" data-search-required="${msgSearchRequired}" data-upazila-any="${msgAnyUpazila}" data-upazila-choose="${msgChooseDistrictFirst}" data-upazila-error="${msgUpazilaLoadError}" data-upazila-loading="${msgUpazilaLoading}" data-upazila-none="${msgNoUpazilas}"><option value=""><fmt:message key="select.chooseDistrictFirst"/></option></select></label>
-    <label><fmt:message key="request.contactPhone"/><input name="contactPhone" type="tel" maxlength="24" required value="<c:out value='${requestForm.contactPhone}'/>" placeholder="${msgPhonePlaceholder}" data-phone-error="${msgPhoneValidation}"></label>
-    <label><fmt:message key="request.date"/><input name="neededDate" type="date" required value="<fmt:formatDate value='${requestForm.neededDate}' pattern='yyyy-MM-dd'/>"></label>
-    <label><fmt:message key="common.status"/><select name="requestStatus"><option value="OPEN" ${empty requestForm or requestForm.status eq 'OPEN' ? 'selected' : ''}><fmt:message key="status.open"/></option><option value="FULFILLED" ${requestForm.status eq 'FULFILLED' ? 'selected' : ''}><fmt:message key="status.fulfilled"/></option><option value="CLOSED" ${requestForm.status eq 'CLOSED' ? 'selected' : ''}><fmt:message key="status.closed"/></option></select></label>
-    <label class="full-field"><fmt:message key="request.details"/><textarea name="details" rows="3" maxlength="1000"><c:out value="${requestForm.details}"/></textarea></label>
-    <div class="admin-form-actions"><button class="button" type="submit"><c:choose><c:when test="${not empty editRequest}"><fmt:message key="common.save"/></c:when><c:otherwise><fmt:message key="adminRequests.addRequest"/></c:otherwise></c:choose></button><c:if test="${not empty editRequest}"><a class="table-action" href="${pageContext.request.contextPath}/admin/requests"><fmt:message key="common.cancel"/></a></c:if></div>
-  </form>
-</section>
+        <section class="admin-panel admin-record-form">
+          <div class="admin-panel-heading">
+            <div>
+              <p class="eyebrow">
+                <c:choose>
+                  <c:when test="${not empty editRequest}">
+                    <fmt:message key="adminRequests.editRequest" />
+                  </c:when>
+                  <c:otherwise>
+                    <fmt:message key="adminRequests.addRequest" />
+                  </c:otherwise>
+                </c:choose>
+              </p>
+              <h2>
+                <c:choose>
+                  <c:when test="${not empty editRequest}">
+                    <c:out value="${editRequest.patientName}" />
+                  </c:when>
+                  <c:otherwise>
+                    <fmt:message key="adminRequests.createRequest" />
+                  </c:otherwise>
+                </c:choose>
+              </h2>
+            </div>
+          </div>
+          <form method="post" action="${pageContext.request.contextPath}/admin/requests"
+            class="admin-form admin-form-wide">
+            <input type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>" />
+            <c:choose>
+              <c:when test="${not empty editRequest}"><input type="hidden" name="action" value="update" /><input
+                  type="hidden" name="requestId" value="${editRequest.requestId}" /></c:when>
+              <c:otherwise><input type="hidden" name="action" value="create" /></c:otherwise>
+            </c:choose>
+            <label>
+              <fmt:message key="request.patient" /><input name="patientName" maxlength="120" required
+                value="<c:out value='${requestForm.patientName}'/>">
+            </label>
+            <label>
+              <fmt:message key="common.bloodGroup" /><select name="bloodGroup" required>
+                <option value="">
+                  <fmt:message key="common.chooseGroup" />
+                </option>
+                <option ${requestForm.bloodGroup eq 'A+' ? 'selected' : '' }>A+</option>
+                <option ${requestForm.bloodGroup eq 'A-' ? 'selected' : '' }>A-</option>
+                <option ${requestForm.bloodGroup eq 'B+' ? 'selected' : '' }>B+</option>
+                <option ${requestForm.bloodGroup eq 'B-' ? 'selected' : '' }>B-</option>
+                <option ${requestForm.bloodGroup eq 'AB+' ? 'selected' : '' }>AB+</option>
+                <option ${requestForm.bloodGroup eq 'AB-' ? 'selected' : '' }>AB-</option>
+                <option ${requestForm.bloodGroup eq 'O+' ? 'selected' : '' }>O+</option>
+                <option ${requestForm.bloodGroup eq 'O-' ? 'selected' : '' }>O-</option>
+              </select>
+            </label>
+            <label>
+              <fmt:message key="request.hospital" /><input name="hospital" maxlength="180" required
+                value="<c:out value='${requestForm.hospital}'/>">
+            </label>
+            <label>
+              <fmt:message key="common.district" /><select name="districtId" id="adminRequestDistrict" required
+                data-searchable data-search-placeholder="${msgSearchPlaceholder}"
+                data-search-no-results="${msgSearchNoResults}" data-search-required="${msgSearchRequired}">
+                <option value="">
+                  <fmt:message key="common.chooseDistrict" />
+                </option>
+                <c:forEach var="d" items="${districts}">
+                  <option value="${d.districtId}" ${requestForm.districtId eq d.districtId ? 'selected' : '' }>
+                    <c:out value="${d.name}" />
+                  </option>
+                </c:forEach>
+              </select>
+            </label>
+            <label>
+              <fmt:message key="common.upazila" /> <span class="optional">
+                <fmt:message key="common.optional" />
+              </span><select name="upazilaId" data-district-source="adminRequestDistrict"
+                data-selected="${requestForm.upazilaId}" data-searchable
+                data-search-placeholder="${msgSearchPlaceholder}" data-search-no-results="${msgSearchNoResults}"
+                data-search-required="${msgSearchRequired}" data-upazila-any="${msgAnyUpazila}"
+                data-upazila-choose="${msgChooseDistrictFirst}" data-upazila-error="${msgUpazilaLoadError}"
+                data-upazila-loading="${msgUpazilaLoading}" data-upazila-none="${msgNoUpazilas}">
+                <option value="">
+                  <fmt:message key="select.chooseDistrictFirst" />
+                </option>
+              </select>
+            </label>
+            <label>
+              <fmt:message key="request.contactPhone" /><input name="contactPhone" type="tel" maxlength="24" required
+                value="<c:out value='${requestForm.contactPhone}'/>" placeholder="${msgPhonePlaceholder}"
+                data-phone-error="${msgPhoneValidation}">
+            </label>
+            <label>
+              <fmt:message key="request.date" /><input name="neededDate" type="date" required
+                value="<fmt:formatDate value='${requestForm.neededDate}' pattern='yyyy-MM-dd'/>">
+            </label>
+            <label>
+              <fmt:message key="common.status" /><select name="requestStatus">
+                <option value="OPEN" ${empty requestForm or requestForm.status eq 'OPEN' ? 'selected' : '' }>
+                  <fmt:message key="status.open" />
+                </option>
+                <option value="FULFILLED" ${requestForm.status eq 'FULFILLED' ? 'selected' : '' }>
+                  <fmt:message key="status.fulfilled" />
+                </option>
+                <option value="CLOSED" ${requestForm.status eq 'CLOSED' ? 'selected' : '' }>
+                  <fmt:message key="status.closed" />
+                </option>
+              </select>
+            </label>
+            <label class="full-field">
+              <fmt:message key="request.details" /><textarea name="details" rows="3"
+                maxlength="1000"><c:out value="${requestForm.details}"/></textarea>
+            </label>
+            <div class="admin-form-actions"><button class="button" type="submit">
+                <c:choose>
+                  <c:when test="${not empty editRequest}">
+                    <fmt:message key="common.save" />
+                  </c:when>
+                  <c:otherwise>
+                    <fmt:message key="adminRequests.addRequest" />
+                  </c:otherwise>
+                </c:choose>
+              </button>
+              <c:if test="${not empty editRequest}"><a class="table-action"
+                  href="${pageContext.request.contextPath}/admin/requests">
+                  <fmt:message key="common.cancel" />
+                </a></c:if>
+            </div>
+          </form>
+        </section>
 
-<form class="admin-filter" method="get"><label for="status"><fmt:message key="common.filterByStatus"/></label><select id="status" name="status"><option value=""><fmt:message key="common.allRequests"/></option><option value="OPEN" ${status eq 'OPEN' ? 'selected' : ''}><fmt:message key="common.open"/></option><option value="FULFILLED" ${status eq 'FULFILLED' ? 'selected' : ''}><fmt:message key="common.fulfilled"/></option><option value="CLOSED" ${status eq 'CLOSED' ? 'selected' : ''}><fmt:message key="common.closed"/></option></select><button class="button button-small" type="submit"><fmt:message key="common.apply"/></button></form>
-<section class="admin-panel table-panel"><div class="table-wrap"><table><thead><tr><th><fmt:message key="adminRequests.tablePatient"/></th><th><fmt:message key="common.bloodGroup"/></th><th><fmt:message key="common.location"/></th><th><fmt:message key="request.date"/></th><th><fmt:message key="common.contact"/></th><th><fmt:message key="common.status"/></th><th><fmt:message key="common.actions"/></th></tr></thead><tbody>
-<c:forEach var="r" items="${requests}"><tr><td><strong><c:out value="${r.patientName}"/></strong><small><c:out value="${r.hospital}"/></small></td><td><span class="blood-badge"><c:out value="${r.bloodGroup}"/></span></td><td><c:if test="${not empty r.upazilaName}"><c:out value="${r.upazilaName}"/>, </c:if><c:out value="${r.districtName}"/></td><td><c:out value="${r.neededDate}"/></td><td><c:out value="${r.contactPhone}"/></td><td><span class="table-status status-${fn:toLowerCase(r.status)}"><fmt:message key="status.${fn:toLowerCase(r.status)}"/></span></td><td><div class="action-buttons"><a class="table-action" href="?editId=${r.requestId}"><fmt:message key="common.edit"/></a><c:if test="${r.status ne 'FULFILLED'}"><form method="post" action="${pageContext.request.contextPath}/admin/requests"><input type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>"/><input type="hidden" name="requestId" value="${r.requestId}"/><input type="hidden" name="action" value="fulfilled"/><button class="table-action action-approve" type="submit"><fmt:message key="common.fulfilled"/></button></form></c:if><c:if test="${r.status eq 'OPEN'}"><form method="post" action="${pageContext.request.contextPath}/admin/requests"><input type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>"/><input type="hidden" name="requestId" value="${r.requestId}"/><input type="hidden" name="action" value="closed"/><button class="table-action" type="submit"><fmt:message key="adminRequests.close"/></button></form></c:if><c:if test="${r.status ne 'OPEN'}"><form method="post" action="${pageContext.request.contextPath}/admin/requests"><input type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>"/><input type="hidden" name="requestId" value="${r.requestId}"/><input type="hidden" name="action" value="reopen"/><button class="table-action" type="submit"><fmt:message key="adminRequests.reopen"/></button></form></c:if><form method="post" action="${pageContext.request.contextPath}/admin/requests" data-confirm="${msgAdminRequestDeleteConfirm}"><input type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>"/><input type="hidden" name="requestId" value="${r.requestId}"/><input type="hidden" name="action" value="delete"/><button class="table-action action-delete" type="submit"><fmt:message key="adminDonors.delete"/></button></form></div></td></tr></c:forEach>
-<c:if test="${empty requests}"><tr><td colspan="7" class="table-empty"><fmt:message key="adminRequests.empty"/></td></tr></c:if></tbody></table></div><div class="table-footer"><span><fmt:message key="common.page"/> <c:out value="${page}"/></span><div><c:if test="${page gt 1}"><a class="table-action" href="?status=${status}&amp;page=${page-1}"><fmt:message key="common.previous"/></a></c:if><c:if test="${fn:length(requests) eq 15}"><a class="table-action" href="?status=${status}&amp;page=${page+1}"><fmt:message key="common.next"/></a></c:if></div></div></section>
-<jsp:include page="/admin/includes/footer.jsp"/>
+        <form class="admin-filter" method="get"><label for="status">
+            <fmt:message key="common.filterByStatus" />
+          </label><select id="status" name="status">
+            <option value="">
+              <fmt:message key="common.allRequests" />
+            </option>
+            <option value="OPEN" ${status eq 'OPEN' ? 'selected' : '' }>
+              <fmt:message key="common.open" />
+            </option>
+            <option value="FULFILLED" ${status eq 'FULFILLED' ? 'selected' : '' }>
+              <fmt:message key="common.fulfilled" />
+            </option>
+            <option value="CLOSED" ${status eq 'CLOSED' ? 'selected' : '' }>
+              <fmt:message key="common.closed" />
+            </option>
+          </select><button class="button button-small" type="submit">
+            <fmt:message key="common.apply" />
+          </button></form>
+        <section class="admin-panel table-panel">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>
+                    <fmt:message key="adminRequests.tablePatient" />
+                  </th>
+                  <th>
+                    <fmt:message key="common.bloodGroup" />
+                  </th>
+                  <th>
+                    <fmt:message key="common.location" />
+                  </th>
+                  <th>
+                    <fmt:message key="request.date" />
+                  </th>
+                  <th>
+                    <fmt:message key="common.contact" />
+                  </th>
+                  <th>
+                    <fmt:message key="common.status" />
+                  </th>
+                  <th>
+                    <fmt:message key="common.actions" />
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <c:forEach var="r" items="${requests}">
+                  <tr>
+                    <td><strong>
+                        <c:out value="${r.patientName}" />
+                      </strong><small>
+                        <c:out value="${r.hospital}" />
+                      </small></td>
+                    <td><span class="blood-badge">
+                        <c:out value="${r.bloodGroup}" />
+                      </span></td>
+                    <td>
+                      <c:if test="${not empty r.upazilaName}">
+                        <c:out value="${r.upazilaName}" />,
+                      </c:if>
+                      <c:out value="${r.districtName}" />
+                    </td>
+                    <td>
+                      <c:out value="${r.neededDate}" />
+                    </td>
+                    <td>
+                      <c:out value="${r.contactPhone}" />
+                    </td>
+                    <td><span class="table-status status-${fn:toLowerCase(r.status)}">
+                        <fmt:message key="status.${fn:toLowerCase(r.status)}" />
+                      </span></td>
+                    <td>
+                      <div class="action-buttons"><a class="table-action" href="?editId=${r.requestId}">
+                          <fmt:message key="common.edit" />
+                        </a>
+                        <c:if test="${r.status ne 'FULFILLED'}">
+                          <form method="post" action="${pageContext.request.contextPath}/admin/requests"><input
+                              type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>" /><input
+                              type="hidden" name="requestId" value="${r.requestId}" /><input type="hidden" name="action"
+                              value="fulfilled" /><button class="table-action action-approve" type="submit">
+                              <fmt:message key="common.fulfilled" />
+                            </button></form>
+                        </c:if>
+                        <c:if test="${r.status eq 'OPEN'}">
+                          <form method="post" action="${pageContext.request.contextPath}/admin/requests"><input
+                              type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>" /><input
+                              type="hidden" name="requestId" value="${r.requestId}" /><input type="hidden" name="action"
+                              value="closed" /><button class="table-action" type="submit">
+                              <fmt:message key="adminRequests.close" />
+                            </button></form>
+                        </c:if>
+                        <c:if test="${r.status ne 'OPEN'}">
+                          <form method="post" action="${pageContext.request.contextPath}/admin/requests"><input
+                              type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>" /><input
+                              type="hidden" name="requestId" value="${r.requestId}" /><input type="hidden" name="action"
+                              value="reopen" /><button class="table-action" type="submit">
+                              <fmt:message key="adminRequests.reopen" />
+                            </button></form>
+                        </c:if>
+                        <form method="post" action="${pageContext.request.contextPath}/admin/requests"
+                          data-confirm="${msgAdminRequestDeleteConfirm}"><input type="hidden" name="csrfToken"
+                            value="<c:out value='${csrfToken}'/>" /><input type="hidden" name="requestId"
+                            value="${r.requestId}" /><input type="hidden" name="action" value="delete" /><button
+                            class="table-action action-delete" type="submit">
+                            <fmt:message key="adminDonors.delete" />
+                          </button></form>
+                      </div>
+                    </td>
+                  </tr>
+                </c:forEach>
+                <c:if test="${empty requests}">
+                  <tr>
+                    <td colspan="7" class="table-empty">
+                      <fmt:message key="adminRequests.empty" />
+                    </td>
+                  </tr>
+                </c:if>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-footer"><span>
+              <fmt:message key="common.page" />
+              <c:out value="${page}" />
+            </span>
+            <div>
+              <c:if test="${page gt 1}"><a class="table-action" href="?status=${status}&amp;page=${page-1}">
+                  <fmt:message key="common.previous" />
+                </a></c:if>
+              <c:if test="${fn:length(requests) eq 15}"><a class="table-action"
+                  href="?status=${status}&amp;page=${page+1}">
+                  <fmt:message key="common.next" />
+                </a></c:if>
+            </div>
+          </div>
+        </section>
+        <jsp:include page="/admin/includes/footer.jsp" />

@@ -1,39 +1,324 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ include file="/WEB-INF/jspf/lang.jspf" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<c:set var="pageTitleKey" scope="request" value="page.adminDonors"/>
-<jsp:include page="/admin/includes/header.jsp"/>
+  <%@ include file="/WEB-INF/jspf/lang.jspf" %>
+    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+      <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+        <c:set var="pageTitleKey" scope="request" value="page.adminDonors" />
+        <jsp:include page="/admin/includes/header.jsp" />
 
-<div class="admin-page-heading"><div><p class="eyebrow"><fmt:message key="adminDonors.eyebrow"/></p><h1><fmt:message key="adminDonors.heading"/></h1><p><fmt:message key="adminDonors.intro"/></p></div><span class="admin-count"><strong><c:out value="${totalDonors}" default="0"/></strong> <fmt:message key="common.records"/></span></div>
-<c:if test="${not empty error}"><p class="alert alert-error" role="alert"><c:out value="${error}"/></p></c:if>
-<c:if test="${param.updated eq '1'}"><p class="alert alert-success" role="status"><fmt:message key="adminDonors.updated"/></p></c:if>
+        <div class="admin-page-heading">
+          <div>
+            <p class="eyebrow">
+              <fmt:message key="adminDonors.eyebrow" />
+            </p>
+            <h1>
+              <fmt:message key="adminDonors.heading" />
+            </h1>
+            <p>
+              <fmt:message key="adminDonors.intro" />
+            </p>
+          </div><span class="admin-count"><strong>
+              <c:out value="${totalDonors}" default="0" />
+            </strong>
+            <fmt:message key="common.records" />
+          </span>
+        </div>
+        <c:if test="${not empty error}">
+          <p class="alert alert-error" role="alert">
+            <c:out value="${error}" />
+          </p>
+        </c:if>
+        <c:if test="${param.updated eq '1'}">
+          <p class="alert alert-success" role="status">
+            <fmt:message key="adminDonors.updated" />
+          </p>
+        </c:if>
 
-<section class="admin-panel admin-record-form">
-  <div class="admin-panel-heading"><div><p class="eyebrow"><c:choose><c:when test="${not empty editDonor}"><fmt:message key="adminDonors.editDonor"/></c:when><c:otherwise><fmt:message key="adminDonors.addDonor"/></c:otherwise></c:choose></p><h2><c:choose><c:when test="${not empty editDonor}"><c:out value="${editDonor.fullName}"/></c:when><c:otherwise><fmt:message key="adminDonors.createDonor"/></c:otherwise></c:choose></h2></div></div>
-  <form method="post" action="${pageContext.request.contextPath}/admin/donors" class="admin-form admin-form-wide">
-    <input type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>"/>
-    <c:choose><c:when test="${not empty editDonor}"><input type="hidden" name="action" value="update"/><input type="hidden" name="donorId" value="${editDonor.donorId}"/></c:when><c:otherwise><input type="hidden" name="action" value="create"/><input type="hidden" name="donorStatus" value="PENDING"/><input type="hidden" name="available" value="Y"/></c:otherwise></c:choose>
-    <label><fmt:message key="common.fullName"/><input name="fullName" maxlength="120" required value="<c:out value='${not empty editDonor ? editDonor.fullName : newDonor.fullName}'/>"></label>
-    <label><fmt:message key="register.username"/><input name="username" maxlength="60" required value="<c:out value='${not empty editDonor ? editDonor.username : newDonor.username}'/>"></label>
-    <label><fmt:message key="common.email"/><input type="email" name="email" maxlength="160" required value="<c:out value='${not empty editDonor ? editDonor.email : newDonor.email}'/>"></label>
-    <c:if test="${empty editDonor}"><label><fmt:message key="common.password"/><input type="password" name="password" minlength="8" maxlength="100" required autocomplete="new-password"></label></c:if>
-    <label><fmt:message key="common.phone"/><input type="tel" name="phone" maxlength="24" required value="<c:out value='${not empty editDonor ? editDonor.phone : newDonor.phone}'/>" placeholder="${msgPhonePlaceholder}" data-phone-error="${msgPhoneValidation}"></label>
-    <label><fmt:message key="common.bloodGroup"/><select name="bloodGroup" required><option value=""><fmt:message key="common.chooseGroup"/></option><option ${((not empty editDonor ? editDonor.bloodGroup : newDonor.bloodGroup) eq 'A+') ? 'selected' : ''}>A+</option><option ${((not empty editDonor ? editDonor.bloodGroup : newDonor.bloodGroup) eq 'A-') ? 'selected' : ''}>A-</option><option ${((not empty editDonor ? editDonor.bloodGroup : newDonor.bloodGroup) eq 'B+') ? 'selected' : ''}>B+</option><option ${((not empty editDonor ? editDonor.bloodGroup : newDonor.bloodGroup) eq 'B-') ? 'selected' : ''}>B-</option><option ${((not empty editDonor ? editDonor.bloodGroup : newDonor.bloodGroup) eq 'AB+') ? 'selected' : ''}>AB+</option><option ${((not empty editDonor ? editDonor.bloodGroup : newDonor.bloodGroup) eq 'AB-') ? 'selected' : ''}>AB-</option><option ${((not empty editDonor ? editDonor.bloodGroup : newDonor.bloodGroup) eq 'O+') ? 'selected' : ''}>O+</option><option ${((not empty editDonor ? editDonor.bloodGroup : newDonor.bloodGroup) eq 'O-') ? 'selected' : ''}>O-</option></select></label>
-    <label><fmt:message key="common.district"/><select name="districtId" id="adminDonorDistrict" required data-searchable data-search-placeholder="${msgSearchPlaceholder}" data-search-no-results="${msgSearchNoResults}" data-search-required="${msgSearchRequired}"><option value=""><fmt:message key="common.chooseDistrict"/></option><c:forEach var="d" items="${districts}"><option value="${d.districtId}" ${(not empty editDonor ? editDonor.districtId : newDonor.districtId) eq d.districtId ? 'selected' : ''}><c:out value="${d.name}"/></option></c:forEach></select></label>
-    <label><fmt:message key="common.upazila"/> <span class="optional"><fmt:message key="common.optional"/></span><select name="upazilaId" data-district-source="adminDonorDistrict" data-selected="${not empty editDonor ? editDonor.upazilaId : newDonor.upazilaId}" data-searchable data-search-placeholder="${msgSearchPlaceholder}" data-search-no-results="${msgSearchNoResults}" data-search-required="${msgSearchRequired}" data-upazila-any="${msgAnyUpazila}" data-upazila-choose="${msgChooseDistrictFirst}" data-upazila-error="${msgUpazilaLoadError}" data-upazila-loading="${msgUpazilaLoading}" data-upazila-none="${msgNoUpazilas}"><option value=""><fmt:message key="select.chooseDistrictFirst"/></option></select></label>
-    <label><fmt:message key="profile.lastDonationDate"/> <span class="optional"><fmt:message key="common.optional"/></span><input name="lastDonation" type="date" value="<fmt:formatDate value='${editDonor.lastDonation}' pattern='yyyy-MM-dd'/>"></label>
-    <label><fmt:message key="common.address"/><input name="address" maxlength="240" value="<c:out value='${not empty editDonor ? editDonor.address : newDonor.address}'/>"></label>
-    <c:if test="${not empty editDonor}">
-      <label><fmt:message key="profile.availabilityHeading"/><select name="available"><option value="Y" ${editDonor.available eq 'Y' ? 'selected' : ''}><fmt:message key="status.available"/></option><option value="N" ${editDonor.available eq 'N' ? 'selected' : ''}><fmt:message key="status.paused"/></option></select></label>
-      <label><fmt:message key="common.status"/><select name="donorStatus"><option value="PENDING" ${editDonor.status eq 'PENDING' ? 'selected' : ''}><fmt:message key="status.pending"/></option><option value="ACTIVE" ${editDonor.status eq 'ACTIVE' ? 'selected' : ''}><fmt:message key="status.active"/></option><option value="BLOCKED" ${editDonor.status eq 'BLOCKED' ? 'selected' : ''}><fmt:message key="status.blocked"/></option></select></label>
-    </c:if>
-    <div class="admin-form-actions"><button class="button" type="submit"><c:choose><c:when test="${not empty editDonor}"><fmt:message key="common.save"/></c:when><c:otherwise><fmt:message key="adminDonors.addDonor"/></c:otherwise></c:choose></button><c:if test="${not empty editDonor}"><a class="table-action" href="${pageContext.request.contextPath}/admin/donors"><fmt:message key="common.cancel"/></a></c:if></div>
-  </form>
-</section>
+        <section class="admin-panel admin-record-form">
+          <div class="admin-panel-heading">
+            <div>
+              <p class="eyebrow">
+                <c:choose>
+                  <c:when test="${not empty editDonor}">
+                    <fmt:message key="adminDonors.editDonor" />
+                  </c:when>
+                  <c:otherwise>
+                    <fmt:message key="adminDonors.addDonor" />
+                  </c:otherwise>
+                </c:choose>
+              </p>
+              <h2>
+                <c:choose>
+                  <c:when test="${not empty editDonor}">
+                    <c:out value="${editDonor.fullName}" />
+                  </c:when>
+                  <c:otherwise>
+                    <fmt:message key="adminDonors.createDonor" />
+                  </c:otherwise>
+                </c:choose>
+              </h2>
+            </div>
+          </div>
+          <form method="post" action="${pageContext.request.contextPath}/admin/donors"
+            class="admin-form admin-form-wide">
+            <input type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>" />
+            <c:choose>
+              <c:when test="${not empty editDonor}"><input type="hidden" name="action" value="update" /><input
+                  type="hidden" name="donorId" value="${editDonor.donorId}" /></c:when>
+              <c:otherwise><input type="hidden" name="action" value="create" /><input type="hidden" name="donorStatus"
+                  value="PENDING" /><input type="hidden" name="available" value="Y" /></c:otherwise>
+            </c:choose>
+            <label>
+              <fmt:message key="common.fullName" /><input name="fullName" maxlength="120" required
+                value="<c:out value='${not empty editDonor ? editDonor.fullName : newDonor.fullName}'/>">
+            </label>
+            <label>
+              <fmt:message key="register.username" /><input name="username" maxlength="60" required
+                value="<c:out value='${not empty editDonor ? editDonor.username : newDonor.username}'/>">
+            </label>
+            <label>
+              <fmt:message key="common.email" /><input type="email" name="email" maxlength="160" required
+                value="<c:out value='${not empty editDonor ? editDonor.email : newDonor.email}'/>">
+            </label>
+            <c:if test="${empty editDonor}"><label>
+                <fmt:message key="common.password" /><input type="password" name="password" minlength="8"
+                  maxlength="100" required autocomplete="new-password">
+              </label></c:if>
+            <label>
+              <fmt:message key="common.phone" /><input type="tel" name="phone" maxlength="24" required
+                value="<c:out value='${not empty editDonor ? editDonor.phone : newDonor.phone}'/>"
+                placeholder="${msgPhonePlaceholder}" data-phone-error="${msgPhoneValidation}">
+            </label>
+            <label>
+              <fmt:message key="common.bloodGroup" /><select name="bloodGroup" required>
+                <option value="">
+                  <fmt:message key="common.chooseGroup" />
+                </option>
+                <option ${((not empty editDonor ? editDonor.bloodGroup : newDonor.bloodGroup) eq 'A+' ) ? 'selected'
+                  : '' }>A+</option>
+                <option ${((not empty editDonor ? editDonor.bloodGroup : newDonor.bloodGroup) eq 'A-' ) ? 'selected'
+                  : '' }>A-</option>
+                <option ${((not empty editDonor ? editDonor.bloodGroup : newDonor.bloodGroup) eq 'B+' ) ? 'selected'
+                  : '' }>B+</option>
+                <option ${((not empty editDonor ? editDonor.bloodGroup : newDonor.bloodGroup) eq 'B-' ) ? 'selected'
+                  : '' }>B-</option>
+                <option ${((not empty editDonor ? editDonor.bloodGroup : newDonor.bloodGroup) eq 'AB+' ) ? 'selected'
+                  : '' }>AB+</option>
+                <option ${((not empty editDonor ? editDonor.bloodGroup : newDonor.bloodGroup) eq 'AB-' ) ? 'selected'
+                  : '' }>AB-</option>
+                <option ${((not empty editDonor ? editDonor.bloodGroup : newDonor.bloodGroup) eq 'O+' ) ? 'selected'
+                  : '' }>O+</option>
+                <option ${((not empty editDonor ? editDonor.bloodGroup : newDonor.bloodGroup) eq 'O-' ) ? 'selected'
+                  : '' }>O-</option>
+              </select>
+            </label>
+            <label>
+              <fmt:message key="common.district" /><select name="districtId" id="adminDonorDistrict" required
+                data-searchable data-search-placeholder="${msgSearchPlaceholder}"
+                data-search-no-results="${msgSearchNoResults}" data-search-required="${msgSearchRequired}">
+                <option value="">
+                  <fmt:message key="common.chooseDistrict" />
+                </option>
+                <c:forEach var="d" items="${districts}">
+                  <option value="${d.districtId}" ${(not empty editDonor ? editDonor.districtId : newDonor.districtId)
+                    eq d.districtId ? 'selected' : '' }>
+                    <c:out value="${d.name}" />
+                  </option>
+                </c:forEach>
+              </select>
+            </label>
+            <label>
+              <fmt:message key="common.upazila" /> <span class="optional">
+                <fmt:message key="common.optional" />
+              </span><select name="upazilaId" data-district-source="adminDonorDistrict"
+                data-selected="${not empty editDonor ? editDonor.upazilaId : newDonor.upazilaId}" data-searchable
+                data-search-placeholder="${msgSearchPlaceholder}" data-search-no-results="${msgSearchNoResults}"
+                data-search-required="${msgSearchRequired}" data-upazila-any="${msgAnyUpazila}"
+                data-upazila-choose="${msgChooseDistrictFirst}" data-upazila-error="${msgUpazilaLoadError}"
+                data-upazila-loading="${msgUpazilaLoading}" data-upazila-none="${msgNoUpazilas}">
+                <option value="">
+                  <fmt:message key="select.chooseDistrictFirst" />
+                </option>
+              </select>
+            </label>
+            <label>
+              <fmt:message key="profile.lastDonationDate" /> <span class="optional">
+                <fmt:message key="common.optional" />
+              </span><input name="lastDonation" type="date"
+                value="<fmt:formatDate value='${editDonor.lastDonation}' pattern='yyyy-MM-dd'/>">
+            </label>
+            <label>
+              <fmt:message key="common.address" /><input name="address" maxlength="240"
+                value="<c:out value='${not empty editDonor ? editDonor.address : newDonor.address}'/>">
+            </label>
+            <c:if test="${not empty editDonor}">
+              <label>
+                <fmt:message key="profile.availabilityHeading" /><select name="available">
+                  <option value="Y" ${editDonor.available eq 'Y' ? 'selected' : '' }>
+                    <fmt:message key="status.available" />
+                  </option>
+                  <option value="N" ${editDonor.available eq 'N' ? 'selected' : '' }>
+                    <fmt:message key="status.paused" />
+                  </option>
+                </select>
+              </label>
+              <label>
+                <fmt:message key="common.status" /><select name="donorStatus">
+                  <option value="PENDING" ${editDonor.status eq 'PENDING' ? 'selected' : '' }>
+                    <fmt:message key="status.pending" />
+                  </option>
+                  <option value="ACTIVE" ${editDonor.status eq 'ACTIVE' ? 'selected' : '' }>
+                    <fmt:message key="status.active" />
+                  </option>
+                  <option value="BLOCKED" ${editDonor.status eq 'BLOCKED' ? 'selected' : '' }>
+                    <fmt:message key="status.blocked" />
+                  </option>
+                </select>
+              </label>
+            </c:if>
+            <div class="admin-form-actions"><button class="button" type="submit">
+                <c:choose>
+                  <c:when test="${not empty editDonor}">
+                    <fmt:message key="common.save" />
+                  </c:when>
+                  <c:otherwise>
+                    <fmt:message key="adminDonors.addDonor" />
+                  </c:otherwise>
+                </c:choose>
+              </button>
+              <c:if test="${not empty editDonor}"><a class="table-action"
+                  href="${pageContext.request.contextPath}/admin/donors">
+                  <fmt:message key="common.cancel" />
+                </a></c:if>
+            </div>
+          </form>
+        </section>
 
-<form class="admin-filter" method="get"><label for="status"><fmt:message key="common.filterByStatus"/></label><select id="status" name="status"><option value=""><fmt:message key="common.allDonors"/></option><option value="PENDING" ${status eq 'PENDING' ? 'selected' : ''}><fmt:message key="common.pending"/></option><option value="ACTIVE" ${status eq 'ACTIVE' ? 'selected' : ''}><fmt:message key="common.approved"/></option><option value="BLOCKED" ${status eq 'BLOCKED' ? 'selected' : ''}><fmt:message key="common.blocked"/></option></select><button class="button button-small" type="submit"><fmt:message key="common.apply"/></button></form>
-<section class="admin-panel table-panel"><div class="table-wrap"><table><thead><tr><th><fmt:message key="adminDonors.tableDonor"/></th><th><fmt:message key="common.bloodGroup"/></th><th><fmt:message key="common.location"/></th><th><fmt:message key="common.phone"/></th><th><fmt:message key="profile.availabilityHeading"/></th><th><fmt:message key="common.status"/></th><th><fmt:message key="common.actions"/></th></tr></thead><tbody>
-<c:forEach var="d" items="${donors}"><tr><td><strong><c:out value="${d.fullName}"/></strong><small><c:out value="${d.email}"/></small></td><td><span class="blood-badge"><c:out value="${d.bloodGroup}"/></span></td><td><c:if test="${not empty d.upazilaName}"><c:out value="${d.upazilaName}"/>, </c:if><c:out value="${d.districtName}"/></td><td><c:out value="${d.phone}"/></td><td><span class="table-status ${d.available eq 'Y' ? 'status-available' : ''}"><fmt:message key="${d.available eq 'Y' ? 'status.available' : 'status.paused'}"/></span></td><td><span class="table-status status-${fn:toLowerCase(d.status)}"><fmt:message key="status.${fn:toLowerCase(d.status)}"/></span></td><td><div class="action-buttons"><a class="table-action" href="?editId=${d.donorId}"><fmt:message key="common.edit"/></a><c:if test="${d.status ne 'ACTIVE'}"><form method="post" action="${pageContext.request.contextPath}/admin/donors"><input type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>"/><input type="hidden" name="donorId" value="${d.donorId}"/><input type="hidden" name="action" value="approve"/><button class="table-action action-approve" type="submit"><fmt:message key="adminDonors.approve"/></button></form></c:if><c:if test="${d.status ne 'BLOCKED'}"><form method="post" action="${pageContext.request.contextPath}/admin/donors"><input type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>"/><input type="hidden" name="donorId" value="${d.donorId}"/><input type="hidden" name="action" value="block"/><button class="table-action" type="submit"><fmt:message key="adminDonors.block"/></button></form></c:if><form method="post" action="${pageContext.request.contextPath}/admin/donors" data-confirm="${msgAdminDonorDeleteConfirm}"><input type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>"/><input type="hidden" name="donorId" value="${d.donorId}"/><input type="hidden" name="action" value="delete"/><button class="table-action action-delete" type="submit"><fmt:message key="adminDonors.delete"/></button></form></div></td></tr></c:forEach>
-<c:if test="${empty donors}"><tr><td colspan="7" class="table-empty"><fmt:message key="adminDonors.empty"/></td></tr></c:if></tbody></table></div><div class="table-footer"><span><fmt:message key="common.page"/> <c:out value="${page}"/></span><div><c:if test="${page gt 1}"><a class="table-action" href="?status=${status}&amp;page=${page-1}"><fmt:message key="common.previous"/></a></c:if><c:if test="${fn:length(donors) eq 15}"><a class="table-action" href="?status=${status}&amp;page=${page+1}"><fmt:message key="common.next"/></a></c:if></div></div></section>
-<jsp:include page="/admin/includes/footer.jsp"/>
+        <form class="admin-filter" method="get"><label for="status">
+            <fmt:message key="common.filterByStatus" />
+          </label><select id="status" name="status">
+            <option value="">
+              <fmt:message key="common.allDonors" />
+            </option>
+            <option value="PENDING" ${status eq 'PENDING' ? 'selected' : '' }>
+              <fmt:message key="common.pending" />
+            </option>
+            <option value="ACTIVE" ${status eq 'ACTIVE' ? 'selected' : '' }>
+              <fmt:message key="common.approved" />
+            </option>
+            <option value="BLOCKED" ${status eq 'BLOCKED' ? 'selected' : '' }>
+              <fmt:message key="common.blocked" />
+            </option>
+          </select><button class="button button-small" type="submit">
+            <fmt:message key="common.apply" />
+          </button></form>
+        <section class="admin-panel table-panel">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>
+                    <fmt:message key="adminDonors.tableDonor" />
+                  </th>
+                  <th>
+                    <fmt:message key="common.bloodGroup" />
+                  </th>
+                  <th>
+                    <fmt:message key="common.location" />
+                  </th>
+                  <th>
+                    <fmt:message key="common.phone" />
+                  </th>
+                  <th>
+                    <fmt:message key="profile.availabilityHeading" />
+                  </th>
+                  <th>
+                    <fmt:message key="common.status" />
+                  </th>
+                  <th>
+                    <fmt:message key="common.actions" />
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <c:forEach var="d" items="${donors}">
+                  <tr>
+                    <td><strong>
+                        <c:out value="${d.fullName}" />
+                      </strong><small>
+                        <c:out value="${d.email}" />
+                      </small></td>
+                    <td><span class="blood-badge">
+                        <c:out value="${d.bloodGroup}" />
+                      </span></td>
+                    <td>
+                      <c:if test="${not empty d.upazilaName}">
+                        <c:out value="${d.upazilaName}" />,
+                      </c:if>
+                      <c:out value="${d.districtName}" />
+                    </td>
+                    <td>
+                      <c:out value="${d.phone}" />
+                    </td>
+                    <td><span class="table-status ${d.available eq 'Y' ? 'status-available' : ''}">
+                        <fmt:message key="${d.available eq 'Y' ? 'status.available' : 'status.paused'}" />
+                      </span></td>
+                    <td><span class="table-status status-${fn:toLowerCase(d.status)}">
+                        <fmt:message key="status.${fn:toLowerCase(d.status)}" />
+                      </span></td>
+                    <td>
+                      <div class="action-buttons"><a class="table-action" href="?editId=${d.donorId}">
+                          <fmt:message key="common.edit" />
+                        </a>
+                        <c:if test="${d.status ne 'ACTIVE'}">
+                          <form method="post" action="${pageContext.request.contextPath}/admin/donors"><input
+                              type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>" /><input
+                              type="hidden" name="donorId" value="${d.donorId}" /><input type="hidden" name="action"
+                              value="approve" /><button class="table-action action-approve" type="submit">
+                              <fmt:message key="adminDonors.approve" />
+                            </button></form>
+                        </c:if>
+                        <c:if test="${d.status ne 'BLOCKED'}">
+                          <form method="post" action="${pageContext.request.contextPath}/admin/donors"><input
+                              type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>" /><input
+                              type="hidden" name="donorId" value="${d.donorId}" /><input type="hidden" name="action"
+                              value="block" /><button class="table-action" type="submit">
+                              <fmt:message key="adminDonors.block" />
+                            </button></form>
+                        </c:if>
+                        <form method="post" action="${pageContext.request.contextPath}/admin/donors"
+                          data-confirm="${msgAdminDonorDeleteConfirm}"><input type="hidden" name="csrfToken"
+                            value="<c:out value='${csrfToken}'/>" /><input type="hidden" name="donorId"
+                            value="${d.donorId}" /><input type="hidden" name="action" value="delete" /><button
+                            class="table-action action-delete" type="submit">
+                            <fmt:message key="adminDonors.delete" />
+                          </button></form>
+                      </div>
+                    </td>
+                  </tr>
+                </c:forEach>
+                <c:if test="${empty donors}">
+                  <tr>
+                    <td colspan="7" class="table-empty">
+                      <fmt:message key="adminDonors.empty" />
+                    </td>
+                  </tr>
+                </c:if>
+              </tbody>
+            </table>
+          </div>
+          <div class="table-footer"><span>
+              <fmt:message key="common.page" />
+              <c:out value="${page}" />
+            </span>
+            <div>
+              <c:if test="${page gt 1}"><a class="table-action" href="?status=${status}&amp;page=${page-1}">
+                  <fmt:message key="common.previous" />
+                </a></c:if>
+              <c:if test="${fn:length(donors) eq 15}"><a class="table-action"
+                  href="?status=${status}&amp;page=${page+1}">
+                  <fmt:message key="common.next" />
+                </a></c:if>
+            </div>
+          </div>
+        </section>
+        <jsp:include page="/admin/includes/footer.jsp" />

@@ -1,2 +1,71 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %><%@ include file="/WEB-INF/jspf/lang.jspf" %><%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %><c:set var="pageTitleKey" scope="request" value="login.adminPageTitle"/><jsp:include page="/includes/header.jsp"/>
-<main id="main" class="page-main"><section class="login-layout container"><div class="login-art admin-login-art"><span class="admin-lock">✦</span><p class="eyebrow"><fmt:message key="login.adminEyebrow"/></p><h1><fmt:message key="login.adminHeadline"/></h1><p><fmt:message key="login.adminIntro"/></p></div><div class="panel login-panel"><p class="eyebrow"><fmt:message key="login.secureArea"/></p><h2><fmt:message key="login.adminHeading"/></h2><c:if test="${not empty error}"><p class="alert alert-error"><c:out value="${error}"/></p></c:if><form method="post" action="${pageContext.request.contextPath}/admin/login" data-validate><input type="hidden" name="csrfToken" value="<c:out value='${csrfToken}'/>"/><label><fmt:message key="login.identityLabel"/><input name="identity" autocomplete="username" autocapitalize="none" spellcheck="false" required></label><label><fmt:message key="login.passwordLabel"/><input type="password" name="password" autocomplete="current-password" required></label><button class="button button-block" type="submit"><fmt:message key="login.adminSubmit"/></button></form><p class="form-note"><fmt:message key="login.adminNote"/></p><p class="form-foot"><a href="${pageContext.request.contextPath}/login"><fmt:message key="login.unifiedLink"/></a></p></div></section></main><jsp:include page="/includes/footer.jsp"/>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %> <%@
+include file="/WEB-INF/jspf/lang.jspf" %> <%@ taglib prefix="c"
+uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="pageTitleKey" scope="request" value="login.adminPageTitle" />
+<jsp:include page="/includes/header.jsp" />
+<main id="main" class="page-main">
+  <section class="login-layout container">
+    <div class="login-art admin-login-art">
+      <span class="admin-lock">✦</span>
+      <p class="eyebrow">
+        <fmt:message key="login.adminEyebrow" />
+      </p>
+      <h1>
+        <fmt:message key="login.adminHeadline" />
+      </h1>
+      <p>
+        <fmt:message key="login.adminIntro" />
+      </p>
+    </div>
+    <div class="panel login-panel">
+      <p class="eyebrow">
+        <fmt:message key="login.secureArea" />
+      </p>
+      <h2>
+        <fmt:message key="login.adminHeading" />
+      </h2>
+      <c:if test="${not empty error}">
+        <p class="alert alert-error">
+          <c:out value="${error}" />
+        </p>
+      </c:if>
+      <form
+        method="post"
+        action="${pageContext.request.contextPath}/admin/login"
+        data-validate
+      >
+        <input
+          type="hidden"
+          name="csrfToken"
+          value="<c:out value='${csrfToken}'/>"
+        /><label>
+          <fmt:message key="login.identityLabel" /><input
+            name="identity"
+            autocomplete="username"
+            autocapitalize="none"
+            spellcheck="false"
+            required
+          /> </label
+        ><label>
+          <fmt:message key="login.passwordLabel" /><input
+            type="password"
+            name="password"
+            autocomplete="current-password"
+            required
+          /> </label
+        ><button class="button button-block" type="submit">
+          <fmt:message key="login.adminSubmit" />
+        </button>
+      </form>
+      <p class="form-note">
+        <fmt:message key="login.adminNote" />
+      </p>
+      <p class="form-foot">
+        <a href="${pageContext.request.contextPath}/login">
+          <fmt:message key="login.unifiedLink" />
+        </a>
+      </p>
+    </div>
+  </section>
+</main>
+<jsp:include page="/includes/footer.jsp" />
