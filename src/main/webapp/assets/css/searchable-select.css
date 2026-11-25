@@ -1,0 +1,13 @@
+.searchable-select{position:relative;width:100%;min-width:0}
+.searchable-select__native{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important;opacity:0!important}
+.searchable-select__input{display:block;width:100%;min-height:47px;padding:10px 40px 10px 12px;border:1px solid #d8dde3;border-radius:10px;background:#fff;color:#20262e;font:inherit;line-height:1.4}
+.searchable-select__input:disabled{background:#f1f3f5;color:#78828c;cursor:not-allowed}
+.searchable-select__input[aria-expanded="true"]{border-color:#0d806f;border-bottom-left-radius:0;border-bottom-right-radius:0}
+.searchable-select__list{position:absolute;z-index:60;inset:calc(100% - 1px) 0 auto;max-height:260px;overflow:auto;margin:0;padding:5px;list-style:none;border:1px solid #0d806f;border-top:0;border-radius:0 0 10px 10px;background:#fff;box-shadow:0 12px 24px rgba(32,38,46,.16)}
+.searchable-select__list[hidden]{display:none}
+.searchable-select__option{padding:9px 10px;border-radius:7px;color:#303944;cursor:pointer}
+.searchable-select__option[aria-selected="true"],.searchable-select__option.is-active{background:#e6f5f1;color:#075f53}
+.searchable-select__option[aria-disabled="true"]{color:#919aa3;cursor:default}
+.searchable-select__empty{padding:9px 10px;color:#66717d;font-size:.9rem}
+html[lang="bn"] .searchable-select__input,html[lang="bn"] .searchable-select__option,html[lang="bn"] .searchable-select__empty{font-family:"Hind Siliguri",Inter,Arial,sans-serif}
+@media(max-width:480px){.searchable-select__list{max-height:220px}.searchable-select__option{padding:11px 10px}}

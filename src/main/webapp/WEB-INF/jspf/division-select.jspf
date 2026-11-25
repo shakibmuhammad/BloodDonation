@@ -1,0 +1,7 @@
+<label class="division-filter"><fmt:message key="common.division"/>
+  <select id="${divisionSelectId}" data-searchable data-division-filter="${divisionTargetId}"
+          data-search-placeholder="${msgSearchPlaceholder}" data-search-no-results="${msgSearchNoResults}">
+    <option value=""><fmt:message key="select.allDivisions"/></option>
+    <c:forEach var="division" items="${divisions}"><option value="<c:out value='${division.name}'/>"><c:out value="${division.name}"/></option></c:forEach>
+  </select>
+</label>

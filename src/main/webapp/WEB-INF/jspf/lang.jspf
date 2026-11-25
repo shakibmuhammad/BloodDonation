@@ -1,0 +1,38 @@
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%
+String requestedBloodlinkLocale = request.getParameter("lang");
+if ("en".equalsIgnoreCase(requestedBloodlinkLocale) || "bn".equalsIgnoreCase(requestedBloodlinkLocale)) {
+    session.setAttribute("bloodlinkLocale", requestedBloodlinkLocale.toLowerCase(java.util.Locale.ROOT));
+}
+Object savedBloodlinkLocale = session.getAttribute("bloodlinkLocale");
+if (!("en".equals(savedBloodlinkLocale) || "bn".equals(savedBloodlinkLocale))) {
+    session.setAttribute("bloodlinkLocale", "en");
+}
+%>
+<fmt:setLocale value="${sessionScope.bloodlinkLocale}" scope="session"/>
+<fmt:setBundle basename="i18n.messages" scope="session"/>
+<fmt:message key="admin.navigation" var="msgAdminNavigation" scope="request"/>
+<fmt:message key="adminDonors.deleteConfirm" var="msgAdminDonorDeleteConfirm" scope="request"/>
+<fmt:message key="adminLocations.deleteUpazilaConfirm" var="msgAdminLocationDeleteUpazilaConfirm" scope="request"/>
+<fmt:message key="adminLocations.deleteDistrictConfirm" var="msgAdminLocationDeleteDistrictConfirm" scope="request"/>
+<fmt:message key="adminLocations.deleteDivisionConfirm" var="msgAdminLocationDeleteDivisionConfirm" scope="request"/>
+<fmt:message key="adminRequests.deleteConfirm" var="msgAdminRequestDeleteConfirm" scope="request"/>
+<fmt:message key="common.phonePlaceholder" var="msgPhonePlaceholder" scope="request"/>
+<fmt:message key="language.label" var="msgLanguageLabel" scope="request"/>
+<fmt:message key="nav.label" var="msgNavLabel" scope="request"/>
+<fmt:message key="nav.open" var="msgNavOpen" scope="request"/>
+<fmt:message key="request.detailsPlaceholder" var="msgRequestDetailsPlaceholder" scope="request"/>
+<fmt:message key="requests.heading" var="msgRequestsHeading" scope="request"/>
+<fmt:message key="search.heading" var="msgSearchHeading" scope="request"/>
+<fmt:message key="select.anyUpazila" var="msgAnyUpazila" scope="request"/>
+<fmt:message key="select.upazilaLoadError" var="msgUpazilaLoadError" scope="request"/>
+<fmt:message key="select.loading" var="msgUpazilaLoading" scope="request"/>
+<fmt:message key="select.noUpazilas" var="msgNoUpazilas" scope="request"/>
+<fmt:message key="select.chooseDistrictFirst" var="msgChooseDistrictFirst" scope="request"/>
+<fmt:message key="select.search.noResults" var="msgSearchNoResults" scope="request"/>
+<fmt:message key="select.search.placeholder" var="msgSearchPlaceholder" scope="request"/>
+<fmt:message key="select.search.required" var="msgSearchRequired" scope="request"/>
+<fmt:message key="site.dropAlt" var="msgSiteDropAlt" scope="request"/>
+<fmt:message key="site.homeAlt" var="msgSiteHomeAlt" scope="request"/>
+<fmt:message key="validation.phone" var="msgPhoneValidation" scope="request"/>
+<fmt:message key="home.stats.label" var="msgHomeStatsLabel" scope="request"/>
