@@ -13,6 +13,7 @@
       <a href="${pageContext.request.contextPath}/requests"><fmt:message key="nav.requests"/></a>
       <a href="${pageContext.request.contextPath}/about.jsp"><fmt:message key="nav.about"/></a>
       <a href="${pageContext.request.contextPath}/contact.jsp"><fmt:message key="nav.contact"/></a>
+      <a class="button button-small nav-donate" href="${pageContext.request.contextPath}/donate.jsp"><fmt:message key="nav.donate"/></a>
       <c:choose>
         <c:when test="${not empty sessionScope.donorId}">
           <a href="${pageContext.request.contextPath}/user/dashboard"><fmt:message key="nav.dashboard"/></a>
@@ -20,7 +21,7 @@
         </c:when>
         <c:otherwise><a href="${pageContext.request.contextPath}/login"><fmt:message key="nav.login"/></a><a class="button button-small" href="${pageContext.request.contextPath}/register"><fmt:message key="nav.becomeDonor"/></a></c:otherwise>
       </c:choose>
-      <div class="language-switch" role="group" aria-label="${msgLanguageLabel}"><a href="?lang=en" lang="en" <c:if test="${sessionScope.bloodlinkLocale eq 'en'}">aria-current="page"</c:if>><fmt:message key="language.english"/></a><span aria-hidden="true">|</span><a href="?lang=bn" lang="bn" <c:if test="${sessionScope.bloodlinkLocale eq 'bn'}">aria-current="page"</c:if>><fmt:message key="language.bangla"/></a></div>
+      <div class="language-switch" role="group" aria-label="${msgLanguageLabel}"><a href="?lang=bn" lang="bn" <c:if test="${sessionScope.bloodlinkLocale eq 'bn'}">aria-current="page"</c:if>><fmt:message key="language.bangla"/></a><span aria-hidden="true">|</span><a href="?lang=en" lang="en" <c:if test="${sessionScope.bloodlinkLocale eq 'en'}">aria-current="page"</c:if>><fmt:message key="language.english"/></a></div>
     </div>
   </nav>
 </header>

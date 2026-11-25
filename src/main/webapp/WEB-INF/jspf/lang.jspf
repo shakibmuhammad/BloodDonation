@@ -1,16 +1,35 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%
-String requestedBloodlinkLocale = request.getParameter("lang");
-if ("en".equalsIgnoreCase(requestedBloodlinkLocale) || "bn".equalsIgnoreCase(requestedBloodlinkLocale)) {
-    session.setAttribute("bloodlinkLocale", requestedBloodlinkLocale.toLowerCase(java.util.Locale.ROOT));
-}
-Object savedBloodlinkLocale = session.getAttribute("bloodlinkLocale");
-if (!("en".equals(savedBloodlinkLocale) || "bn".equals(savedBloodlinkLocale))) {
-    session.setAttribute("bloodlinkLocale", "en");
+if (request.getAttribute("bloodlinkLocaleInitialized") == null) {
+    java.util.Locale resolvedBloodlinkLocale = com.blood.util.I18n.locale(request);
+    String resolvedLanguage = resolvedBloodlinkLocale.getLanguage();
+    boolean updateLanguageCookie = true;
+    javax.servlet.http.Cookie[] languageCookies = request.getCookies();
+    if (languageCookies != null) {
+        for (javax.servlet.http.Cookie languageCookie : languageCookies) {
+            if ("bloodlinkLocale".equals(languageCookie.getName()) && resolvedLanguage.equals(languageCookie.getValue())) {
+                updateLanguageCookie = false;
+                break;
+            }
+        }
+    }
+    if (updateLanguageCookie) {
+        javax.servlet.http.Cookie languageCookie = new javax.servlet.http.Cookie("bloodlinkLocale", resolvedLanguage);
+        String cookiePath = request.getContextPath();
+        languageCookie.setPath(cookiePath == null || cookiePath.isEmpty() ? "/" : cookiePath + "/");
+        languageCookie.setMaxAge(31536000);
+        languageCookie.setHttpOnly(true);
+        languageCookie.setSecure(request.isSecure());
+        response.addCookie(languageCookie);
+    }
+    response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+    response.setHeader("Pragma", "no-cache");
+    response.setDateHeader("Expires", 0);
+    request.setAttribute("bloodlinkLocaleInitialized", Boolean.TRUE);
 }
 %>
-<fmt:setLocale value="${sessionScope.bloodlinkLocale}" scope="session"/>
-<fmt:setBundle basename="i18n.messages" scope="session"/>
+<fmt:setLocale value="${sessionScope.bloodlinkLocale}" scope="request"/>
+<fmt:setBundle basename="i18n.messages" scope="request"/>
 <fmt:message key="admin.navigation" var="msgAdminNavigation" scope="request"/>
 <fmt:message key="adminDonors.deleteConfirm" var="msgAdminDonorDeleteConfirm" scope="request"/>
 <fmt:message key="adminLocations.deleteUpazilaConfirm" var="msgAdminLocationDeleteUpazilaConfirm" scope="request"/>

@@ -34,6 +34,11 @@ public class LoginServlet extends HttpServlet {
             }
             Donor donor=new DonorDAO().authenticate(identity,password);
             if(donor!=null){
+                if("PENDING".equals(donor.getStatus())){
+                    req.setAttribute("error",I18n.message(req,"login.pendingApproval"));
+                    doGet(req,resp);
+                    return;
+                }
                 HttpSession old=req.getSession(false);
                 if(old!=null)old.invalidate();
                 HttpSession session=req.getSession(true);

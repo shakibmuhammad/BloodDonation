@@ -71,4 +71,52 @@
       if (!window.confirm(form.dataset.confirm)) event.preventDefault();
     });
   });
+
+  var amountButtons = document.querySelectorAll('[data-donate-amount]');
+  var customAmount = document.querySelector('#donateCustomAmount');
+  amountButtons.forEach(function (button) {
+    button.addEventListener('click', function () {
+      amountButtons.forEach(function (item) {
+        item.classList.remove('is-selected');
+        item.setAttribute('aria-pressed', 'false');
+      });
+      button.classList.add('is-selected');
+      button.setAttribute('aria-pressed', 'true');
+      if (customAmount) customAmount.value = button.dataset.donateAmount;
+    });
+  });
+  if (customAmount) {
+    customAmount.addEventListener('input', function () {
+      amountButtons.forEach(function (button) {
+        button.classList.remove('is-selected');
+        button.setAttribute('aria-pressed', 'false');
+      });
+    });
+  }
+
+  var copyStatus = document.querySelector('#donateCopyStatus');
+  document.querySelectorAll('.copy-number').forEach(function (button) {
+    button.addEventListener('click', function () {
+      var value = button.dataset.copyValue || '';
+      var failedMessage = copyStatus ? copyStatus.dataset.copyFailed : '';
+      var successMessage = copyStatus ? copyStatus.dataset.copySuccess : '';
+      if (!value || !copyStatus) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(value)
+          .then(function () { copyStatus.textContent = successMessage; })
+          .catch(function () { copyStatus.textContent = failedMessage; });
+        return;
+      }
+      var temporaryInput = document.createElement('textarea');
+      temporaryInput.value = value;
+      temporaryInput.setAttribute('readonly', '');
+      temporaryInput.style.position = 'fixed';
+      temporaryInput.style.opacity = '0';
+      document.body.appendChild(temporaryInput);
+      temporaryInput.select();
+      var copied = document.execCommand('copy');
+      temporaryInput.remove();
+      copyStatus.textContent = copied ? successMessage : failedMessage;
+    });
+  });
 }());

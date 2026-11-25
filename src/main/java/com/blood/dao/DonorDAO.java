@@ -20,7 +20,7 @@ public class DonorDAO {
         }
     }
     public Donor authenticate(String identity, String password) throws SQLException {
-        String sql = "SELECT " + FIELDS + ",d.password_hash,d.password_salt" + JOINS + "WHERE (LOWER(d.email)=LOWER(?) OR LOWER(d.username)=LOWER(?)) AND d.status='ACTIVE'";
+        String sql = "SELECT " + FIELDS + ",d.password_hash,d.password_salt" + JOINS + "WHERE (LOWER(d.email)=LOWER(?) OR LOWER(d.username)=LOWER(?)) AND d.status IN ('ACTIVE','PENDING')";
         try (Connection c=DBConnection.getConnection(); PreparedStatement ps=c.prepareStatement(sql)) {
             ps.setString(1,identity); ps.setString(2,identity);
             try (ResultSet rs=ps.executeQuery()) {
